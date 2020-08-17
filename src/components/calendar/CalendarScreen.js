@@ -1,9 +1,10 @@
 import React from 'react';
+import Navbar from '../ui/Navbar';
 
 export default function CalendarScreen() {
   return (
     <div>
-      <h1>Calendar Screen</h1>
+      <Navbar />
     </div>
   );
 }
