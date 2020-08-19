@@ -6,6 +6,7 @@ import DateTimePicker from 'react-datetime-picker';
 import { toast } from 'react-toastify';
 
 import { uiCloseModal } from 'actions/ui';
+import { addNewEvent } from 'actions/events';
 
 const customStyles = {
   content: {
@@ -82,8 +83,18 @@ export default function CalendarModal() {
       return;
     }
 
-    closeModal();
+    dispatch(
+      addNewEvent({
+        ...formValues,
+        id: new Date().getTime(),
+        user: {
+          _id: '123',
+          name: 'Zajith',
+        },
+      })
+    );
     setIsInvalidTitle(false);
+    closeModal();
   };
 
   return (

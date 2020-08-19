@@ -20,6 +20,12 @@ const initialState = {
 
 export const calendarReducer = (state = initialState, action) => {
   switch (action.type) {
+    case types.EVENT_ADD_NEW:
+      return {
+        ...state,
+        events: [...state.events, action.payload],
+      };
+
     case types.EVENT_SET_ACTIVE:
       return {
         ...state,
