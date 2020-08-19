@@ -61,25 +61,28 @@ export default function CalendarScreen() {
     <div className='calendar-screen'>
       <Navbar />
 
-      <Calendar
-        localizer={localizer}
-        events={events}
-        startAccessor='start'
-        endAccessor='end'
-        messages={messages}
-        eventPropGetter={eventStyleGetter}
-        onDoubleClickEvent={onDoubleClick}
-        onSelectEvent={onSelectEvent}
-        onSelectSlot={onSelectSlot}
-        selectable={true}
-        onView={onViewChange}
-        view={lastView}
-        components={{ event: CalendarEvent }}
-      />
+      <div className='calendar-main'>
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor='start'
+          endAccessor='end'
+          messages={messages}
+          eventPropGetter={eventStyleGetter}
+          onDoubleClickEvent={onDoubleClick}
+          onSelectEvent={onSelectEvent}
+          onSelectSlot={onSelectSlot}
+          selectable={true}
+          onView={onViewChange}
+          view={lastView}
+          components={{ event: CalendarEvent }}
+        />
+
+        <AddNewFab />
+        {activeEvent && <DeleteEventFab />}
+      </div>
 
       <CalendarModal />
-      <AddNewFab />
-      {activeEvent && <DeleteEventFab />}
     </div>
   );
 }

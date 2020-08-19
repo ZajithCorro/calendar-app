@@ -10,6 +10,11 @@ body {
   height: 100vh;
 }
 
+.calendar-main {
+  height: 100%;
+  padding: 0.75rem 1rem;
+}
+
 .rbc-calendar  {
   height: 100%;
 }
@@ -74,6 +79,7 @@ body {
   position: fixed;
   right: 25px;
   width: 62px;
+  z-index: 1000;
 }
 
 .fab-danger {
@@ -84,4 +90,5 @@ body {
   padding: 15px;
   position: fixed;
   left: 25px;
+  z-index: 1000;
 }
