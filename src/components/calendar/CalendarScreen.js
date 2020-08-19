@@ -7,6 +7,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { messages } from 'helpers/calendar-messages';
 import { uiOpenModal } from 'actions/ui';
+import { setActiveEvent } from 'actions/events';
 
 import Navbar from '../ui/Navbar';
 import CalendarEvent from './CalendarEvent';
@@ -39,6 +40,10 @@ export default function CalendarScreen() {
     dispatch(uiOpenModal());
   };
 
+  const onSelectEvent = (event) => {
+    dispatch(setActiveEvent(event));
+  };
+
   const onViewChange = (event) => {
     setLastView(event);
     localStorage.setItem('lastView', event);
@@ -58,6 +63,7 @@ export default function CalendarScreen() {
         messages={messages}
         eventPropGetter={eventStyleGetter}
         onDoubleClickEvent={onDoubleClick}
+        onSelectEvent={onSelectEvent}
         onView={onViewChange}
         view={lastView}
         components={{ event: CalendarEvent }}
