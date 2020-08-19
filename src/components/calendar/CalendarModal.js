@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import Modal from 'react-modal';
@@ -6,7 +6,7 @@ import DateTimePicker from 'react-datetime-picker';
 import { toast } from 'react-toastify';
 
 import { uiCloseModal } from 'actions/ui';
-import { addNewEvent } from 'actions/events';
+import { addNewEvent, clearActiveEvent } from 'actions/events';
 
 const customStyles = {
   content: {
@@ -24,21 +24,31 @@ Modal.setAppElement('#root');
 const now = moment().minutes(0).seconds(0).add(1, 'hours');
 const end = now.clone().add(1, 'hours');
 
+const initEvent = {
+  title: 'Evento',
+  notes: '',
+  start: now.toDate(),
+  end: end.toDate(),
+};
+
 export default function CalendarModal() {
   const dispatch = useDispatch();
+
+  const { modalOpen } = useSelector((state) => state.ui);
+  const { activeEvent } = useSelector((state) => state.calendar);
+
   const [startDate, setStartDate] = useState(now.toDate());
   const [endDate, setEndDate] = useState(end.toDate());
   const [isInvalidTitle, setIsInvalidTitle] = useState(false);
-  const { modalOpen } = useSelector((state) => state.ui);
-
-  const [formValues, setFormValues] = useState({
-    title: 'Evento',
-    notes: '',
-    start: now.toDate(),
-    end: end.toDate(),
-  });
+  const [formValues, setFormValues] = useState(initEvent);
 
   const { title, notes } = formValues;
+
+  useEffect(() => {
+    if (activeEvent) {
+      setFormValues(activeEvent);
+    }
+  }, [activeEvent]);
 
   const handleInputChange = ({ target }) => {
     setFormValues({
@@ -49,6 +59,9 @@ export default function CalendarModal() {
 
   const closeModal = () => {
     dispatch(uiCloseModal());
+    dispatch(clearActiveEvent());
+    setFormValues(initEvent);
+    setIsInvalidTitle(false);
   };
 
   const handleStartDateChange = (e) => {
@@ -75,12 +88,13 @@ export default function CalendarModal() {
     const momentEnd = moment(end);
 
     if (momentStart.isSameOrAfter(momentEnd)) {
-      toast.error(' ⚠ La fecha final debe ser mayor a la fecha de inicio');
+      return toast.error(
+        ' ⚠ La fecha final debe ser mayor a la fecha de inicio'
+      );
     }
 
     if (title.trim().length < 2) {
-      setIsInvalidTitle(true);
-      return;
+      return setIsInvalidTitle(true);
     }
 
     dispatch(
