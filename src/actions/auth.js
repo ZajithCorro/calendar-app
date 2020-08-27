@@ -56,8 +56,6 @@ export const startChecking = () => {
     const resp = await fetchConToken('auth/renew');
     const body = await resp.json();
 
-    console.log(body);
-
     if (body.ok) {
       const { token, uid, name } = body;
       localStorage.setItem('token', token);
@@ -70,7 +68,7 @@ export const startChecking = () => {
         })
       );
     } else {
-      dispatch(checkingFinish);
+      dispatch(checkingFinish());
     }
   };
 };
