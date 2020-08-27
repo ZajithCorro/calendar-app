@@ -81,3 +81,13 @@ const login = (user) => ({
   type: types.AUTH_LOGIN,
   payload: user,
 });
+
+/* Logout */
+export const startLogout = () => {
+  return (dispatch) => {
+    localStorage.clear();
+    dispatch(logout());
+  };
+};
+
+const logout = () => ({ type: types.AUTH_LOGOUT });

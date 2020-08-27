@@ -19,6 +19,11 @@ export const authReducer = (state = initialState, action) => {
         checking: false,
       };
 
+    case types.AUTH_LOGOUT:
+      return {
+        checking: false,
+      };
+
     default:
       return state;
   }
