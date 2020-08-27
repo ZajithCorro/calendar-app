@@ -3,7 +3,8 @@ import { useDispatch } from 'react-redux';
 import './login.css';
 
 import { useForm } from 'hooks/useForm';
-import { startLogin } from 'actions/auth';
+import { startLogin, startRegister } from 'actions/auth';
+import { toast } from 'react-toastify';
 
 export default function LoginScreen() {
   const dispatch = useDispatch();
@@ -13,11 +14,28 @@ export default function LoginScreen() {
     lPassword: 'password',
   });
 
+  const [formRegisterValues, handleRegisterInputChange] = useForm({
+    rName: 'Edrey',
+    rEmail: 'zajith@gmail.com',
+    rPassword1: 'password',
+    rPassword2: 'password',
+  });
+
   const { lEmail, lPassword } = formLoginValues;
+  const { rName, rEmail, rPassword1, rPassword2 } = formRegisterValues;
 
   const handleLogin = (e) => {
     e.preventDefault();
     dispatch(startLogin(lEmail, lPassword));
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+    if (rPassword1 !== rPassword2)
+      return toast.error(` ⚠️ Las contraseñas deben de ser iguales`);
+
+    dispatch(startRegister(rEmail, rPassword1, rName));
   };
 
   return (
@@ -54,12 +72,15 @@ export default function LoginScreen() {
 
         <div className='col-md-6 login-form-2'>
           <h3>Registro</h3>
-          <form>
+          <form onSubmit={handleRegister}>
             <div className='form-group'>
               <input
                 type='text'
                 className='form-control'
                 placeholder='Nombre'
+                name='rName'
+                value={rName}
+                onChange={handleRegisterInputChange}
               />
             </div>
             <div className='form-group'>
@@ -67,6 +88,9 @@ export default function LoginScreen() {
                 type='email'
                 className='form-control'
                 placeholder='Correo'
+                name='rEmail'
+                value={rEmail}
+                onChange={handleRegisterInputChange}
               />
             </div>
             <div className='form-group'>
@@ -74,6 +98,9 @@ export default function LoginScreen() {
                 type='password'
                 className='form-control'
                 placeholder='Contraseña'
+                name='rPassword1'
+                value={rPassword1}
+                onChange={handleRegisterInputChange}
               />
             </div>
 
@@ -82,6 +109,9 @@ export default function LoginScreen() {
                 type='password'
                 className='form-control'
                 placeholder='Repita la contraseña'
+                name='rPassword2'
+                value={rPassword2}
+                onChange={handleRegisterInputChange}
               />
             </div>
 
