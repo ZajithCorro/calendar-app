@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 
-import { fetchSinToken } from 'helpers/fetch';
+import { fetchSinToken, fetchConToken } from 'helpers/fetch';
 import { types } from 'types/types';
 
 export const startLogin = (email, password) => {
@@ -50,6 +50,34 @@ export const startRegister = (email, password, name) => {
     }
   };
 };
+
+export const startChecking = () => {
+  return async (dispatch) => {
+    const resp = await fetchConToken('auth/renew');
+    const body = await resp.json();
+
+    console.log(body);
+
+    if (body.ok) {
+      const { token, uid, name } = body;
+      localStorage.setItem('token', token);
+      localStorage.setItem('token-init-date', new Date().getTime());
+
+      dispatch(
+        login({
+          uid,
+          name,
+        })
+      );
+    } else {
+      dispatch(checkingFinish);
+    }
+  };
+};
+
+const checkingFinish = () => ({
+  type: types.AUTH_CHECKING_FINISH,
+});
 
 const login = (user) => ({
   type: types.AUTH_LOGIN,
