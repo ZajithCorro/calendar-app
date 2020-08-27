@@ -1,5 +1,6 @@
 import { fetchSinToken } from 'helpers/fetch';
 import { types } from 'types/types';
+import { toast } from 'react-toastify';
 
 export const startLogin = (email, password) => {
   return async (dispatch) => {
@@ -17,6 +18,8 @@ export const startLogin = (email, password) => {
           name,
         })
       );
+    } else {
+      toast.error(`⚠ ${body.msg}`);
     }
   };
 };
