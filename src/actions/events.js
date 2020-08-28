@@ -1,6 +1,7 @@
 import { types } from 'types/types';
 import { fetchConToken } from 'helpers/fetch';
 import { prepareEvents } from 'helpers/prepareEvents';
+import { toast } from 'react-toastify';
 
 export const eventStartAddNew = (event) => {
   return async (dispatch, getState) => {
@@ -37,7 +38,24 @@ export const clearActiveEvent = () => ({
   type: types.EVENT_CLEAR_ACTIVE_EVENT,
 });
 
-export const updateEvent = (event) => ({
+export const eventStartUpdate = (event) => {
+  return async (dispatch) => {
+    try {
+      const resp = await fetchConToken(`events/${event.id}`, event, 'PUT');
+      const body = await resp.json();
+
+      if (body.ok) {
+        dispatch(updateEvent(event));
+      } else {
+        toast.error(` ⚠️  ${body.msg}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+const updateEvent = (event) => ({
   type: types.EVENT_UPDATE,
   payload: event,
 });
@@ -52,11 +70,7 @@ export const eventStartLoading = () => {
       const resp = await fetchConToken('events');
       const body = await resp.json();
 
-      console.log(body.eventos);
-
       const events = prepareEvents(body.eventos);
-
-      console.log(events);
 
       dispatch(eventLoaded(events));
     } catch (error) {

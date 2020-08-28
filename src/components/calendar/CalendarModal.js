@@ -8,9 +8,9 @@ import { toast } from 'react-toastify';
 import { uiCloseModal } from 'actions/ui';
 import {
   clearActiveEvent,
-  updateEvent,
   eventStartAddNew,
   deleteEvent,
+  eventStartUpdate,
 } from 'actions/events';
 
 const customStyles = {
@@ -113,7 +113,7 @@ export default function CalendarModal() {
     }
 
     if (activeEvent) {
-      dispatch(updateEvent(formValues));
+      dispatch(eventStartUpdate(formValues));
     } else {
       dispatch(eventStartAddNew(formValues));
     }
