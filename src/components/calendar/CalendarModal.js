@@ -6,7 +6,12 @@ import DateTimePicker from 'react-datetime-picker';
 import { toast } from 'react-toastify';
 
 import { uiCloseModal } from 'actions/ui';
-import { addNewEvent, clearActiveEvent, updateEvent } from 'actions/events';
+import {
+  clearActiveEvent,
+  updateEvent,
+  eventStartAddNew,
+  deleteEvent,
+} from 'actions/events';
 
 const customStyles = {
   content: {
@@ -21,14 +26,11 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-const now = moment().minutes(0).seconds(0).add(1, 'hours');
-const end = now.clone().add(1, 'hours');
-
 const initEvent = {
-  title: 'Evento',
+  title: '',
   notes: '',
-  start: now.toDate(),
-  end: end.toDate(),
+  start: '',
+  end: '',
 };
 
 export default function CalendarModal() {
@@ -37,8 +39,8 @@ export default function CalendarModal() {
   const { modalOpen } = useSelector((state) => state.ui);
   const { activeEvent } = useSelector((state) => state.calendar);
 
-  const [startDate, setStartDate] = useState(now.toDate());
-  const [endDate, setEndDate] = useState(end.toDate());
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [isInvalidTitle, setIsInvalidTitle] = useState(false);
   const [formValues, setFormValues] = useState(initEvent);
 
@@ -47,10 +49,14 @@ export default function CalendarModal() {
   useEffect(() => {
     if (activeEvent) {
       setFormValues(activeEvent);
+      setStartDate(new Date(activeEvent.start));
+      setEndDate(new Date(activeEvent.end));
     } else {
       setFormValues(initEvent);
+      setStartDate('');
+      setEndDate('');
     }
-  }, [activeEvent]);
+  }, [activeEvent, setFormValues]);
 
   const handleInputChange = ({ target }) => {
     setFormValues({
@@ -63,6 +69,8 @@ export default function CalendarModal() {
     dispatch(uiCloseModal());
     dispatch(clearActiveEvent());
     setFormValues(initEvent);
+    setStartDate('');
+    setEndDate('');
     setIsInvalidTitle(false);
   };
 
@@ -80,6 +88,11 @@ export default function CalendarModal() {
       ...formValues,
       end: e,
     });
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteEvent());
+    closeModal();
   };
 
   const handleSubmitForm = (e) => {
@@ -102,16 +115,7 @@ export default function CalendarModal() {
     if (activeEvent) {
       dispatch(updateEvent(formValues));
     } else {
-      dispatch(
-        addNewEvent({
-          ...formValues,
-          id: new Date().getTime(),
-          user: {
-            _id: '123',
-            name: 'Zajith',
-          },
-        })
-      );
+      dispatch(eventStartAddNew(formValues));
     }
 
     setIsInvalidTitle(false);
@@ -128,9 +132,11 @@ export default function CalendarModal() {
       className='modal'
       overlayClassName='modal-fondo'
     >
-      <h1> {activeEvent ? 'Editar evento' : 'Nuevo evento'}</h1>
+      <div className='container'>
+        <h1> {activeEvent ? 'Editar evento' : 'Nuevo evento'}</h1>
+      </div>
       <hr />
-      <form className='container' onSubmit={handleSubmitForm}>
+      <form className='container'>
         <div className='form-group'>
           <label>Fecha y hora inicio</label>
           <DateTimePicker
@@ -182,10 +188,30 @@ export default function CalendarModal() {
           </small>
         </div>
 
-        <button type='submit' className='btn btn-outline-primary btn-block'>
-          <i className='far fa-save'></i>
-          <span> Guardar</span>
-        </button>
+        <div className='container'>
+          <div className='row'>
+            <div className='col'>
+              <button
+                type='button'
+                className='btn btn-outline-danger btn-block'
+                onClick={handleDelete}
+              >
+                <i className='far fa-trash-alt'></i>
+                <span> Eliminar</span>
+              </button>
+            </div>
+            <div className='col'>
+              <button
+                type='button'
+                className='btn btn-outline-primary btn-block'
+                onClick={handleSubmitForm}
+              >
+                <i className='far fa-save'></i>
+                <span> Guardar</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </Modal>
   );

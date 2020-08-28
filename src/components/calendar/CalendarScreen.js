@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -7,31 +7,31 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { messages } from 'helpers/calendar-messages';
 import { uiOpenModal } from 'actions/ui';
-import { setActiveEvent, clearActiveEvent } from 'actions/events';
+import {
+  setActiveEvent,
+  clearActiveEvent,
+  eventStartLoading,
+} from 'actions/events';
 
 import Navbar from '../ui/Navbar';
 import CalendarEvent from './CalendarEvent';
 import CalendarModal from './CalendarModal';
 import AddNewFab from 'components/ui/AddNewFab';
-import DeleteEventFab from 'components/ui/DeleteEventFab';
 
 moment.locale('es');
 const localizer = momentLocalizer(moment);
 
 export default function CalendarScreen() {
   const dispatch = useDispatch();
-  const { events, activeEvent } = useSelector((state) => state.calendar);
+  const { events } = useSelector((state) => state.calendar);
 
   const [lastView, setLastView] = useState(
     localStorage.getItem('lastView') || 'month'
   );
 
-  const onDoubleClick = (event) => {
-    dispatch(uiOpenModal());
-  };
-
   const onSelectEvent = (event) => {
     dispatch(setActiveEvent(event));
+    dispatch(uiOpenModal());
   };
 
   const onViewChange = (event) => {
@@ -57,6 +57,10 @@ export default function CalendarScreen() {
     dispatch(clearActiveEvent());
   };
 
+  useEffect(() => {
+    dispatch(eventStartLoading());
+  }, [dispatch]);
+
   return (
     <div className='calendar-screen'>
       <Navbar />
@@ -69,7 +73,6 @@ export default function CalendarScreen() {
           endAccessor='end'
           messages={messages}
           eventPropGetter={eventStyleGetter}
-          onDoubleClickEvent={onDoubleClick}
           onSelectEvent={onSelectEvent}
           onSelectSlot={onSelectSlot}
           selectable={true}
@@ -79,7 +82,6 @@ export default function CalendarScreen() {
         />
 
         <AddNewFab />
-        {activeEvent && <DeleteEventFab />}
       </div>
 
       <CalendarModal />
