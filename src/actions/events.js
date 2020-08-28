@@ -60,8 +60,28 @@ const updateEvent = (event) => ({
   payload: event,
 });
 
-export const deleteEvent = () => ({
+export const eventStartDelete = () => {
+  return async (dispatch, getState) => {
+    const { id } = getState().calendar.activeEvent;
+
+    try {
+      const resp = await fetchConToken(`events/${id}`, {}, 'DELETE');
+      const body = await resp.json();
+
+      if (body.ok) {
+        dispatch(deleteEvent(id));
+      } else {
+        toast.error(` ⚠️  ${body.msg}`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+const deleteEvent = (id) => ({
   type: types.EVENT_DELETE,
+  payload: id,
 });
 
 export const eventStartLoading = () => {

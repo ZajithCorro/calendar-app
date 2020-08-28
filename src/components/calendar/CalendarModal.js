@@ -9,8 +9,8 @@ import { uiCloseModal } from 'actions/ui';
 import {
   clearActiveEvent,
   eventStartAddNew,
-  deleteEvent,
   eventStartUpdate,
+  eventStartDelete,
 } from 'actions/events';
 
 const customStyles = {
@@ -91,7 +91,7 @@ export default function CalendarModal() {
   };
 
   const handleDelete = () => {
-    dispatch(deleteEvent());
+    dispatch(eventStartDelete());
     closeModal();
   };
 
@@ -151,7 +151,7 @@ export default function CalendarModal() {
           <DateTimePicker
             onChange={handleEndDateChange}
             value={endDate}
-            minDate={startDate}
+            minDate={new Date(startDate)}
             className='form-control'
           />
         </div>

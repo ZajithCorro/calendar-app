@@ -36,9 +36,7 @@ export const calendarReducer = (state = initialState, action) => {
     case types.EVENT_DELETE:
       return {
         ...state,
-        events: state.events.filter(
-          (event) => event.id !== state.activeEvent.id
-        ),
+        events: state.events.filter((event) => event.id !== action.payload),
         activeEvent: null,
       };
 
